@@ -63,12 +63,17 @@ void  execute(char **argv)
           printf("*** ERROR: forking child process failed\n");
           exit(1);
      }
-     else if (pid == 0) {          
-          if (execvp(*argv, argv) < 0) {    
+     else if (pid == 0) { 
+       
+       if(strcmp(argv[0],"cd")==0){
+               chdir(argv[1]);
+          }
+          else if (execvp(*argv, argv) < 0) {     /* execute the command  */
                printf("*** ERROR: exec failed\n");
                exit(1);
           }
-     }
+          }
+     
      else {                                  
           while (wait(&status) != pid)       
                ;
@@ -118,6 +123,9 @@ for (buf = ptr = NULL; ptr == NULL; size *= 2)
 return ptr;
 }
 
+
+
+
 void init_shell_loop(void){
  int status =1; 
  //current =0;
@@ -136,21 +144,23 @@ void init_shell_loop(void){
 
      char* input = takeinput();
 
+
      if(strcmp(input,ch)==0){
        continue;
      }
 
-    else  if(strcmp(input,ch1)==0){ status =0;break;}
-     else if(strcmp(input,"su\n")==0){u=0;continue;}
-    else if(strcmp(input,"suexit\n")==0){u=1;continue;}
+      else  if(strcmp(input,ch1)==0){ status =0;break;}
       else if(strcmp(input,"$$\n")==0){int procid = getpid(); printf("%d\n",procid);}
+      
+
      else{
        
        if (input[strlen(input) - 1] == '\n')input[strlen(input) - 1] = '\0';
       
       // char* binpat = "/bin/";
        parse_input(input, gargv);
-        execute(gargv); 
+
+         execute(gargv);
        /*char *args[]={input,NULL}; 
         execvp(args[0],args); 
       */
@@ -160,7 +170,7 @@ void init_shell_loop(void){
      /************************HISTORY FUNCTION*************************************
      if (input[strlen(input) - 1] == '\n')input[strlen(input) - 1] = '\0';
       hist[current]=strdup(cmd);
-      current = (current+1)%HISTORY_COUNT;
+      current = (current+1)%HISTORY_COUNT;http://www.sarathlakshman.com/2012/09/24/implementation-overview-of-redirection-and-pipe-operators-in-shehttp://www.sarathlakshman.com/2012/09/24/implementation-overview-of-redirection-and-pipe-operators-in-shehttp://www.sarathlakshman.com/2012/09/24/implementation-overview-of-redirection-and-pipe-operators-in-shellllll
       if (strcmp(cmd, "history") == 0)
       history(hist, current);
       if(input[strlen(input)-1] =='\n') input[strlen(input)-1] = '\0';
